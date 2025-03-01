@@ -1,4 +1,4 @@
-# Visual Studio Code Kubernetes Tools
+ # Visual Studio Code Kubernetes Tools
 [![Build Status](https://github.com/cloorc/vscode-kubernetes-tools/actions/workflows/build-dev.yml/badge.svg)](https://github.com/cloorc/vscode-kubernetes-tools/actions/workflows/build-dev.yml)
 
 The extension for developers building applications to run in Kubernetes clusters
