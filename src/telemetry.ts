@@ -1,5 +1,5 @@
 import TelemetryReporter from '@vscode/extension-telemetry';
-import vscode = require('vscode');
+import * as vscode from 'vscode';
 
 export let reporter: TelemetryReporter | undefined;
 
@@ -29,4 +29,11 @@ function getPackageInfo(_context: vscode.ExtensionContext): IPackageInfo | undef
         };
     }
     return undefined;
+}
+
+export function sendTelemetryEvent(eventName: string, properties?: { [key: string]: string }, measurements?: { [key: string]: number }) {
+    const telemetryReporter = vscode.extensions.getExtension('your-extension-id')?.exports?.telemetryReporter;
+    if (telemetryReporter) {
+        telemetryReporter.sendTelemetryEvent(eventName, properties, measurements);
+    }
 }

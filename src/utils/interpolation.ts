@@ -69,41 +69,57 @@ export function interpolateVariables(value: string | undefined, recursive = fals
     if (relativeFilePath) {
         value = value.replace(/\${relativeFile}/g, relativeFilePath);
         value = value.replace(/\${relativeFileDirname}/g, relativeFilePath.substring(0, relativeFilePath.lastIndexOf(path.sep)));
+        value = value.replace(/\${fileBasename}/g, path.basename(relativeFilePath));
+        value = value.replace(/\${fileBasenameNoExtension}/g, path.basename(relativeFilePath, path.extname(relativeFilePath)));
+        value = value.replace(/\${fileExtname}/g, path.extname(relativeFilePath));
+        value = value.replace(/\${fileDirname}/g, path.dirname(absoluteFilePath!));
     }
 
     if (absoluteFilePath) {
-        const parsedPath = path.parse(absoluteFilePath);
         value = value.replace(/\${file}/g, absoluteFilePath);
-        value = value.replace(/\${fileBasename}/g, parsedPath.base);
-        value = value.replace(/\${fileBasenameNoExtension}/g, parsedPath.name);
-        value = value.replace(/\${fileExtname}/g, parsedPath.ext);
-        value = value.replace(/\${fileDirname}/g, parsedPath.dir.substring(parsedPath.dir.lastIndexOf(path.sep) + 1));
-        value = value.replace(/\${cwd}/g, parsedPath.dir);
     }
-    value = value.replace(/\${pathSeparator}/g, path.sep);
 
-    const activeEditor = vscode.window.activeTextEditor;
+    value = value.replace(/\${cwd}/g, process.cwd());
+
+    const activeEditor = vscode.window.activeTextEditor;    const activeEditor = vscode.window.activeTextEditor;
     if (activeEditor) {
-        value = value.replace(/\${lineNumber}/g, (activeEditor.selection.start.line + 1).toString());
-        value = value.replace(/\${selectedText}/g, activeEditor.document.getText(new vscode.Range(activeEditor.selection.start, activeEditor.selection.end)));
+        const selection = activeEditor.selection; = activeEditor.selection;
+        const selectedText = activeEditor.document.getText(selection);
+        value = value.replace(/\${lineNumber}/g, (selection.active.line + 1).toString());
+        value = value.replace(/\${selectedText}/g, selectedText);   value = value.replace(/\${selectedText}/g, selectedText);
     }
-    value = value.replace(/\${env:(.*?)}/g, function (variable) {
-        const matches = variable.match(/\${env:(.*?)}/);
-        if (matches && matches.length > 1) {
+
+    value = value.replace(/\${pathSeparator}/g, path.sep);/g, path.sep);
+
+    value = value.replace(/\${env:(.*?)}/g, function (variable) { = value.replace(/\${env:(.*?)}/g, function (variable) {
+        const matches = variable.match(/\${env:(.*?)}/);hes = variable.match(/\${env:(.*?)}/);
+        if (matches && matches.length > 1) { if (matches && matches.length > 1) {
             return process.env[matches[1]] || '';
         }
         return '';
     });
-    value = value.replace(/\${config:(.*?)}/g, function (variable) {
-        const matches = variable.match(/\${env:(.*?)}/);
-        if (matches && matches.length > 1) {
-            return vscode.workspace.getConfiguration().get(matches[1], '');
+    value = value.replace(/\${config:(.*?)}/g, function (variable) { = value.replace(/\${config:(.*?)}/g, function (variable) {
+        const matches = variable.match(/\${env:(.*?)}/);hes = variable.match(/\${env:(.*?)}/);
+        if (matches && matches.length > 1) { if (matches && matches.length > 1) {
+            return vscode.workspace.getConfiguration().get(matches[1], '');            return vscode.workspace.getConfiguration().get(matches[1], '');
         }
         return '';
-    });
+    }););
 
-    if (recursive && value.match(/\${(workspaceFolder|workspaceFolderBasename|fileWorkspaceFolder|relativeFile|fileBasename|fileBasenameNoExtension|fileExtname|fileDirname|cwd|pathSeparator|lineNumber|selectedText|env:(.*?)|config:(.*?))}/)) {
-        value = interpolateVariables(value, recursive);
+    if (recursive) {   if (recursive) {
+        const newValue = interpolateVariables(value, true);        const newValue = interpolateVariables(value, true);
+
+
+
+
+
+
+
+
+}    return value;    }        }            value = newValue;        if (newValue !== value) {        if (newValue !== value) {
+            value = newValue;
+        }
     }
+
     return value;
 }

@@ -1,3 +1,4 @@
+/// <reference types="vscode" />
 import * as vscode from "vscode";
 import { Host } from "./host";
 import { BaseRequestOptions } from '@gitbeaker/rest';
@@ -7,6 +8,8 @@ import { AbstractCluster, AbstractClusterExplorer, AbstractObject } from "./abst
 import * as clipboard from './components/platform/clipboard';
 import { Axios } from "axios";
 import { GitlabToken } from "@gitbeaker/requester-utils";
+import { GitOperator } from './gitOperator';
+import { GitLab } from '@gitbeaker/node';
 
 const axios = new Axios();
 
@@ -17,18 +20,13 @@ export interface Repository extends BaseRequestOptions<boolean> {
     token: GitlabToken;
 };
 
-export interface GitOperator {
-    defaultBranch(repo: string): Promise<string>;
-    branches(repo: string): Promise<string[]>;
-    tree(repo: string, branch: string, path: string): Promise<{ name: string; type: string; path: string }[]>;
-    raw(repo: string, path: string, ref: string): Promise<any>;
-    members(repo: string): Promise<{ username: string; id: any }[]>;
-    merge(repo: string, source: string, target: string, title: string, assignee: any): Promise<{ id: any }>;
-    upload(repo: string, path: string, branch: string, content: string, message: string): Promise<any>;
-}
-
 class GitLabOperator implements GitOperator {
-    constructor(private git: Gitlab<boolean>) { }
+    private git: GitLab;
+
+    constructor(token: string) {
+        this.git = new GitLab({ token });
+    }
+
     upload(repo: string, path: string, branch: string, content: string, message: string): Promise<any> {
         return new Promise((resolve, reject) => {
             this.raw(repo, path, branch)
@@ -38,7 +36,7 @@ class GitLabOperator implements GitOperator {
     }
 
     merge(repo: string, source: string, target: string, title: string, assignee: any): Promise<{ id: any }> {
-        return this.git!.MergeRequests.create(repo, source, target, title, { assigneeId: assignee });
+        return this.git.MergeRequests.create(repo, source, target, title, { assigneeId: assignee });
     }
 
     members(repo: string): Promise<{ username: string; id: any }[]> {
@@ -196,19 +194,16 @@ export class GitObject implements AbstractObject<GitObject> {
         }
         return item;
     }
-
     copyPath() {
         clipboard.write(this.path).then(() => {
             vscode.window.showInformationMessage(`Kubernetes: copied gitlab object path ${this.path}`);
         });
     }
-
     copyName() {
         clipboard.write(this.name).then(() => {
             vscode.window.showInformationMessage(`Kubernetes: copied gitlab object name ${this.name}`);
         });
     }
-
     async createMergeRequest(): Promise<void> {
         const branches = await this.git!.branches(this.repo);
         const sourceBranch = await vscode.window.showQuickPick(branches, { title: `Please specify the source branch:`, placeHolder: this.branch, canPickMany: false });
@@ -243,7 +238,6 @@ export class GitExplorer extends AbstractClusterExplorer<GitObject> {
         super(host, context);
         this.context = context;
     }
-
     protected async getClusters(): Promise<GitObject[]> {
         const rawClusters: string = this.context.globalState.get(GITLAB_STATE) || "[]";
         const clusters: Repository[] = JSON.parse(rawClusters);
@@ -455,6 +449,7 @@ export async function getContent(node: GitObject): Promise<void> {
                         case "vue-html":
                             language = "vue-html";
                             break;
+                        case "yaml":
                         case "yml":
                         case "YAML":
                         case "YML":
