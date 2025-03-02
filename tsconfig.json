@@ -22,12 +22,12 @@
         "forceConsistentCasingInFileNames": true,
         "esModuleInterop": true,
         "skipDefaultLibCheck": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "typeRoots": [
+            "node_modules/@types"
+        ]
     },
     "exclude": [
-        "./node_modules",
-        "./node_modules/*",
-        "./node_modules/@types/node/index.d.ts",
         "node_modules",
         ".vscode-test",
         "docs"
