@@ -372,7 +372,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<APIBro
         // Telemetry
         registerTelemetry(context),
 
-        treeProvider.initialize()
+        treeProvider.initialize(),
+
+        // New command for creating a VS Code extension
+        registerCommand('extension.createVSCodeExtension', createVSCodeExtension)
     ];
 
     telemetry.invalidateClusterType(undefined, kubectl);
@@ -1594,8 +1597,7 @@ async function getContainers(resource: ContainerContainer): Promise<Container[] 
 async function getContainerQuery(resource: ContainerContainer, containerType: string): Promise<Container[] | undefined> {
     const q = shell.isWindows() ? `'` : `"`;
     const lit = (l: string) => `{${q}${l}${q}}`;
-    const query = `${lit("NAME\\tIMAGE\\n")}\
-    {range ${resource.containersQueryPath}.${containerType}[*]}{.name}${lit("\\t")}{.image}${lit("\\n")}{end}`;
+    const query = `${lit("NAME\\tIMAGE\\n")}\{range ${resource.containersQueryPath}.${containerType}[*]}{.name}${lit("\\t")}{.image}${lit("\\n")}{end}`;
     const queryArg = shell.isWindows() ? `"${query}"` : `'${query}'`;
     let cmd = `get ${resource.kindName} -o jsonpath=${queryArg}`;
     if (resource.namespace && resource.namespace.length > 0) {
@@ -2747,4 +2749,10 @@ function updateStatusBarItem(statusBarItem: vscode.StatusBarItem, text: string, 
     } else {
         statusBarItem.hide();
     }
+}
+
+async function createVSCodeExtension() {
+    const terminal = vscode.window.createTerminal('Create VS Code Extension');
+    terminal.show();
+    terminal.sendText('yo code');
 }

@@ -27,7 +27,8 @@
     "activationEvents": [
         "onCommand:extension.vsKubernetesSelectPod",
         "onLanguage:yaml",
-        "onFileSystem:k8smsx"
+        "onFileSystem:k8smsx",
+        "onCommand:extension.createVSCodeExtension"
     ],
     "main": "./dist/extension",
     "contributes": {
@@ -1612,6 +1613,11 @@
             {
                 "command": "kubernetes.portForwarding.showSessions",
                 "title": "Show Port Forwarding Sessions",
+                "category": "Kubernetes"
+            },
+            {
+                "command": "extension.createVSCodeExtension",
+                "title": "Create VS Code Extension",
                 "category": "Kubernetes"
             }
         ],
