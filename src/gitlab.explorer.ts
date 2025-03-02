@@ -473,3 +473,36 @@ export async function getContent(node: GitObject): Promise<void> {
         vscode.window.showWarningMessage(`Unexpected error on talking to ${node.name}: ${JSON.stringify(err)}`);
     }
 }
+
+{
+    "compilerOptions": {
+        "module": "NodeNext", // 指定模組系統，NodeNext 支援 Node.js 的 ESM 和 CommonJS 模組
+        "target": "ES2021", // 指定 ECMAScript 目標版本
+        "outDir": "out", // 指定編譯後的輸出目錄
+        "moduleResolution": "NodeNext", // 指定模組解析策略，NodeNext 支援 Node.js 的 ESM 和 CommonJS 模組解析
+        "lib": [
+            "ES2021" // 包含的庫文件
+        ],
+        "sourceMap": true, // 生成對應的 .map 文件，便於調試
+        "rootDir": ".", // 指定輸入文件的根目錄
+        "alwaysStrict": true, // 在每個文件中啟用嚴格模式
+        "noFallthroughCasesInSwitch": true, // 防止 switch 語句中 case 語句落空
+        "noImplicitReturns": true, // 在函數中所有分支必須有返回值
+        "noUnusedLocals": true, // 報告未使用的局部變量
+        "noUnusedParameters": true, // 報告未使用的參數
+        "noImplicitAny": true, // 禁止隱式的 any 類型
+        "strictFunctionTypes": true, // 啟用嚴格的函數類型檢查
+        "strictNullChecks": true, // 嚴格的 null 檢查
+        "noImplicitThis": true, // 禁止隱式的 this 類型
+        "strict": true, // 啟用所有嚴格檢查選項
+        "forceConsistentCasingInFileNames": true, // 強制文件名一致大小寫
+        "esModuleInterop": true, // 啟用對 ES 模塊互操作性的支持
+        "skipDefaultLibCheck": true, // 跳過標準庫文件的類型檢查
+        "skipLibCheck": true // 跳過所有 .d.ts 文件的類型檢查
+    },
+    "exclude": [
+        "node_modules", // 排除 node_modules 目錄
+        ".vscode-test", // 排除 .vscode-test 目錄
+        "docs" // 排除 docs 目錄
+    ]
+}
